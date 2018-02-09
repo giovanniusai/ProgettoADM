@@ -5,6 +5,7 @@ public class Settings {
     public static final int MONGO_SERVER_PORT = 27017;
     public static final String MONGO_DB_NAME = "grotteDB";
     public static final String MONGO_COLLECTION_NAME = "grotte";
+    public static final String MONGO_COLLECTION_NAME2 = "strutture";
 
     //costanti relative a POSTGIS; L'user e pwd sono relative alla
     //mia instanza di DB, nel caso dovreste modificarle se sono diversi nei vostri

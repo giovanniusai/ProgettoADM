@@ -58,13 +58,18 @@ public class PostGis {
     }
 
     public void execute() {
-        String sql = "SELECT * FROM grotte_e_caverne_3";
+        String sql = "SELECT s.nome as nome_struttura,g.nome as nome_grotta\n" +
+                "from strutture_turistiche_1 s\n" +
+                "join grotte_e_caverne_3 g\n" +
+                "on ST_DWithin(ST_MakePoint(ST_X(ST_Transform(s.geom,3035)),ST_Y(ST_Transform(s.geom,3035)))::geography\n" +
+                "             ,ST_MakePoint(ST_X(ST_Transform(g.geom,3035)),ST_Y(ST_Transform(g.geom,3035)))::geography,1000)\n" +
+                "order by s.nome";
         try {
             conn = DriverManager.getConnection(Settings.POSTGIS_DB_URL, Settings.POSTGIS_DB_USERNAME, Settings.POSTGIS_DB_PASSWORD);
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
             while(rs.next()){
-                System.out.println(rs.getString("nome"));
+                System.out.println("Grotta: "+rs.getString("nome_grotta")+" Struttura: " + rs.getString("nome_struttura"));
             }
 
         } catch (SQLException e ){

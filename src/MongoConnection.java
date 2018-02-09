@@ -12,6 +12,7 @@ public class MongoConnection {
     private static MongoConnection instance;
     private MongoClient mongoClient;
     private MongoCollection<Document> grotte;
+    private MongoCollection<Document> strutture;
     private boolean connected = false;
 
     public MongoConnection() {
@@ -31,6 +32,7 @@ public class MongoConnection {
             mongoClient = new MongoClient(Settings.MONGO_SERVER_IP, Settings.MONGO_SERVER_PORT);
             MongoDatabase db = mongoClient.getDatabase(Settings.MONGO_DB_NAME);
             grotte = db.getCollection(Settings.MONGO_COLLECTION_NAME);
+            strutture = db.getCollection(Settings.MONGO_COLLECTION_NAME2);
 
             connected = true;
         }
@@ -54,5 +56,9 @@ public class MongoConnection {
 
     public MongoCollection<Document> getGrotte() {
         return grotte;
+    }
+
+    public MongoCollection<Document> getStrutture() {
+        return strutture;
     }
 }
