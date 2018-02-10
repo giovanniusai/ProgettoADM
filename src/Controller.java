@@ -1,12 +1,16 @@
 import com.mongodb.BasicDBObject;
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.Aggregates;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import org.bson.Document;
 import org.bson.json.JsonMode;
 import org.bson.json.JsonWriter;
+
+import java.util.Arrays;
 
 public class Controller {
 
@@ -91,6 +95,32 @@ public class Controller {
 
     @FXML
     public void buttonQuery3Clicked(){
+
+
+
+        if (connection.isConnected()){
+            textAreaResult1.setText("");
+            Document support = new Document( "_id", "$PROVINCIA");
+            support.put("NUMERO DI GROTTE", new Document( "$sum", 1));
+            Document group = new Document("$group", support);
+            Document sort= new Document("$sort", new Document("NUMERO DI GROTTE", -1));
+            Document limit = new Document("$limit",2);
+
+            AggregateIterable aggregate = connection.getGrotte().aggregate(Arrays.asList(group,sort,limit));
+
+            MongoCursor cursor = aggregate.iterator();
+            while(cursor.hasNext()){
+                String ris = cursor.next().toString();
+                String risultato = ris.substring(14,ris.length()-2);
+                textAreaResult1.setText(textAreaResult1.getText()+"PROVINCIA: "+risultato+"\n");
+            }
+        }
+
+        else {
+            textAreaResult1.setText("E' necessario connettersi a MongoDB");
+        }
+
+
 
     }
 
