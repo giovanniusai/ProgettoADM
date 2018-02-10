@@ -35,11 +35,12 @@ public class Main extends Application{
         
 
         //Connessione a MongoDB
-        MongoConnection connection = new MongoConnection();
+        /*MongoConnection connection = new MongoConnection();
         connection.connect();
         BasicDBObject query = new BasicDBObject("tipostrutt","Bed and breakfast");
         FindIterable<Document> iterDoc = connection.getStrutture().find(query);
-        MongoCursor cursor = iterDoc.iterator();
+        MongoCursor cursor = iterDoc.iterator();*/
+
 
         /*while(cursor.hasNext()){
         System.out.println(cursor.next());
