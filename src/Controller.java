@@ -10,6 +10,7 @@ import org.bson.Document;
 import org.bson.json.JsonMode;
 import org.bson.json.JsonWriter;
 
+import java.sql.*;
 import java.util.Arrays;
 
 public class Controller {
@@ -39,8 +40,13 @@ public class Controller {
     @FXML
     public TextArea textAreaResult1;
 
+    @FXML
+    public TextArea textAreaResult2;
+
 
     MongoConnection connection = new MongoConnection();
+
+    Connection conn;
 
     //Metodi click sui bottoni
     @FXML
@@ -127,15 +133,82 @@ public class Controller {
     @FXML
     public void buttonQuery4Clicked(){
 
+        textAreaResult2.setText("");
+
+
+        String sql = "SELECT s.nome as nome_struttura,g.nome as nome_grotta,ST_Distance(ST_MakePoint(ST_X(ST_Transform(s.geom,3035)),ST_Y(ST_Transform(s.geom,3035)))::geography,\n" +
+                "                                ST_MakePoint(ST_X(ST_Transform(g.geom,3035)),ST_Y(ST_Transform(g.geom,3035)))::geography) /1000 as distanza\n" +
+                "from grotte_e_caverne_3 g\n" +
+                "join strutture_turistiche_1 s\n" +
+                "on g.gid<>s.gid\n" +
+                "where g.nome = 'GROTTA DEL BUE MARINO'  and s.tipostrutt='Bed and breakfast'\n" +
+                "order by distanza\n" +
+                "limit 1;\n";
+        try {
+            conn = DriverManager.getConnection(Settings.POSTGIS_DB_URL, Settings.POSTGIS_DB_USERNAME, Settings.POSTGIS_DB_PASSWORD);
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            while(rs.next()){
+                textAreaResult2.setText("B&B: "+rs.getString("nome_struttura") + ", Grotta: "+rs.getString("nome_grotta")+", Distanza: " +rs.getString("distanza")+" km");
+            }
+
+        } catch (SQLException e ){
+            System.out.println(e.getMessage());
+        }
+
     }
 
     @FXML
     public void buttonQuery5Clicked(){
+        textAreaResult2.setText("");
+
+
+        String sql = "SELECT g.nome as nome_grotta\n" +
+                "from strutture_turistiche_1 s\n" +
+                "join grotte_e_caverne_3 g\n" +
+                "on ST_DWithin(ST_MakePoint(ST_X(ST_Transform(s.geom,3035)),ST_Y(ST_Transform(s.geom,3035)))::geography\n" +
+                "             ,ST_MakePoint(ST_X(ST_Transform(g.geom,3035)),ST_Y(ST_Transform(g.geom,3035)))::geography,10000)\n" +
+                "where s.nome = 'EDERA'";
+        try {
+            conn = DriverManager.getConnection(Settings.POSTGIS_DB_URL, Settings.POSTGIS_DB_USERNAME, Settings.POSTGIS_DB_PASSWORD);
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            while(rs.next()){
+                textAreaResult2.setText(textAreaResult2.getText()+rs.getString("nome_grotta")+"\n");
+            }
+
+        } catch (SQLException e ){
+            System.out.println(e.getMessage());
+        }
 
     }
 
     @FXML
     public void buttonQuery6Clicked(){
+        textAreaResult2.setText("");
+
+
+        String sql = "SELECT s.nome as nome_strutt, count(*) as num_grotte\n" +
+                "from strutture_turistiche_1 s\n" +
+                "join grotte_e_caverne_3 g\n" +
+                "on ST_DWithin(ST_MakePoint(ST_X(ST_Transform(s.geom,3035)),ST_Y(ST_Transform(s.geom,3035)))::geography\n" +
+                "             ,ST_MakePoint(ST_X(ST_Transform(g.geom,3035)),ST_Y(ST_Transform(g.geom,3035)))::geography,5000)\n" +
+                "where s.siglaprov = 'SS' and s.tipostrutt= 'Albergo'\n" +
+                "group by s.nome\n" +
+                "order by num_grotte desc\n" +
+                "LIMIT 1";
+        try {
+            conn = DriverManager.getConnection(Settings.POSTGIS_DB_URL, Settings.POSTGIS_DB_USERNAME, Settings.POSTGIS_DB_PASSWORD);
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            while(rs.next()){
+                textAreaResult2.setText("Albergo: "+rs.getString("nome_strutt")+" ,numero di grotte: "+rs.getString("num_grotte"));
+            }
+
+        } catch (SQLException e ){
+            System.out.println(e.getMessage());
+        }
+
 
     }
 
