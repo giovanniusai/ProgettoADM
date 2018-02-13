@@ -44,8 +44,8 @@ public class Controller {
     public TextArea textAreaResult2;
 
 
+    //variabili per la connessione a mongo e postgre
     MongoConnection connection = new MongoConnection();
-
     Connection conn;
 
     //Metodi click sui bottoni

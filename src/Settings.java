@@ -18,7 +18,4 @@ public class Settings {
     public static final String POSTGIS_DB_PASSWORD = "seriamente93";
 
 
-
-
-
 }

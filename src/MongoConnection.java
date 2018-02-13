@@ -1,10 +1,9 @@
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
-import java.util.List;
+
 
 
 
@@ -19,13 +18,6 @@ public class MongoConnection {
 
     }
 
-    public static MongoConnection getInstance() {
-        if (instance == null) {
-            instance = new MongoConnection();
-        }
-
-        return instance;
-    }
 
     public void connect() {
         if (!connected) {
@@ -38,9 +30,6 @@ public class MongoConnection {
         }
     }
 
-    public long getCount(){
-        return grotte.count();
-    }
 
 
     public void disconnect() {
